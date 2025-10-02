@@ -11,7 +11,6 @@ permissions:
   packages: write
 
 env:
-  # Dockerfile según tu estructura
   DOCKERFILE_PATH: CTPATChecklists/Dockerfile
   IMAGE_NAME: checklistctpat
 
@@ -34,7 +33,6 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # 🔎 Detecta automáticamente .sln o .csproj
       - name: Locate solution/project
         id: paths
         run: |
@@ -54,10 +52,8 @@ jobs:
       - name: Restore
         run: |
           if [ -n "${{ steps.paths.outputs.sln }}" ]; then
-            echo "Restoring solution ${{ steps.paths.outputs.sln }}"
             dotnet restore "${{ steps.paths.outputs.sln }}"
           else
-            echo "Restoring project ${{ steps.paths.outputs.csproj }}"
             dotnet restore "${{ steps.paths.outputs.csproj }}"
           fi
 
@@ -69,7 +65,6 @@ jobs:
             dotnet build "${{ steps.paths.outputs.csproj }}" -c Release --no-restore
           fi
 
-      # 🧪 Tests + cobertura (solo si hay proyectos en /tests)
       - name: Run tests (if any) + coverage
         if: ${{ hashFiles('tests/**.csproj') != '' }}
         run: |
@@ -88,14 +83,15 @@ jobs:
           echo "file=$FILE"
           echo "file=$FILE" >> $GITHUB_OUTPUT
 
+      # ✅ Arreglo: instalar tool y añadirlo a PATH del job
       - name: Install ReportGenerator
         if: steps.cov.outputs.file
-        run: dotnet tool update -g dotnet-reportgenerator-globaltool
+        run: |
+          dotnet tool update -g dotnet-reportgenerator-globaltool
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Generate coverage report + summary
         if: steps.cov.outputs.file
-        env:
-          PATH: $HOME/.dotnet/tools:${{ env.PATH }}
         run: |
           reportgenerator -reports:"${{ steps.cov.outputs.file }}" \
                           -targetdir:"coveragereport" \

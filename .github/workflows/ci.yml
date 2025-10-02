@@ -1,0 +1,49 @@
+name: CI/CD for CTPATChecklists
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Descarga el código
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Configura .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      # Restaura dependencias
+      - name: Restore dependencies
+        run: dotnet restore ./CTPATChecklists.sln
+
+      # Compila
+      - name: Build
+        run: dotnet build ./CTPATChecklists.sln --configuration Release --no-restore
+
+      # Ejecuta pruebas unitarias (si tienes proyecto tests)
+      - name: Run tests
+        run: dotnet test ./CTPATChecklists.sln --no-build --verbosity normal
+
+      # Construye la imagen Docker
+      - name: Build Docker image
+        run: docker build -t arlethl/checklistctpat:latest ./CTPATChecklists
+
+      # Login a DockerHub (usa secretos de GitHub)
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Push a DockerHub
+      - name: Push image to DockerHub
+        run: docker push arlethl/checklistctpat:latest

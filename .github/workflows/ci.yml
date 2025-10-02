@@ -11,7 +11,7 @@ permissions:
   packages: write
 
 env:
-  # 👇 RUTAS CORREGIDAS SEGÚN TU ESTRUCTURA
+  # RUTAS REALES SEGÚN TU ESTRUCTURA
   SOLUTION_PATH: CTPATChecklists/CTPATChecklists.sln
   WEB_PROJECT_PATH: CTPATChecklists/CTPATChecklists/CTPATChecklists.csproj
   DOCKERFILE_PATH: CTPATChecklists/Dockerfile
@@ -27,12 +27,9 @@ jobs:
 
       - name: Show repo tree (debug)
         run: |
-          echo "== ROOT =="
-          ls -la
-          echo "== CTPATChecklists =="
-          ls -la CTPATChecklists || true
-          echo "== tests =="
-          ls -la tests || true
+          echo "== ROOT ==" && ls -la
+          echo "== CTPATChecklists ==" && ls -la CTPATChecklists || true
+          echo "== tests ==" && ls -la tests || true
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
@@ -109,15 +106,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Docker login (only if secrets present)
-        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push image (if secrets present)
-        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
+      - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -126,7 +121,3 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
-      - name: Skip push (no secrets)
-        if: ${{ !(secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' ) }}
-        run: echo "DockerHub secrets not set; skipping push."

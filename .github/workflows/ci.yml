@@ -52,8 +52,10 @@ jobs:
       - name: Restore
         run: |
           if [ -n "${{ steps.paths.outputs.sln }}" ]; then
+            echo "Restoring solution ${{ steps.paths.outputs.sln }}"
             dotnet restore "${{ steps.paths.outputs.sln }}"
           else
+            echo "Restoring project ${{ steps.paths.outputs.csproj }}"
             dotnet restore "${{ steps.paths.outputs.csproj }}"
           fi
 
@@ -83,7 +85,6 @@ jobs:
           echo "file=$FILE"
           echo "file=$FILE" >> $GITHUB_OUTPUT
 
-      # ✅ Arreglo: instalar tool y añadirlo a PATH del job
       - name: Install ReportGenerator
         if: steps.cov.outputs.file
         run: |

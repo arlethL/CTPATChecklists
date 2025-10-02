@@ -11,9 +11,7 @@ permissions:
   packages: write
 
 env:
-  # RUTAS REALES SEGÚN TU ESTRUCTURA
-  SOLUTION_PATH: CTPATChecklists/CTPATChecklists.sln
-  WEB_PROJECT_PATH: CTPATChecklists/CTPATChecklists/CTPATChecklists.csproj
+  # Dockerfile según tu estructura
   DOCKERFILE_PATH: CTPATChecklists/Dockerfile
   IMAGE_NAME: checklistctpat
 
@@ -36,27 +34,42 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      # 🔎 Detecta automáticamente .sln o .csproj
+      - name: Locate solution/project
+        id: paths
+        run: |
+          SLN=$(find . -maxdepth 3 -name '*.sln' | head -n1)
+          CSPROJ=$(find . -maxdepth 4 -name '*.csproj' | grep -i 'CTPATChecklists.csproj' | head -n1)
+          if [ -z "$CSPROJ" ]; then
+            CSPROJ=$(find . -maxdepth 4 -name '*.csproj' | head -n1)
+          fi
+          echo "Detected SLN: $SLN"
+          echo "Detected CSPROJ: $CSPROJ"
+          echo "sln=$SLN" >> $GITHUB_OUTPUT
+          echo "csproj=$CSPROJ" >> $GITHUB_OUTPUT
+          if [ -z "$SLN" ] && [ -z "$CSPROJ" ]; then
+            echo "No .sln or .csproj found"; exit 1
+          fi
+
       - name: Restore
         run: |
-          if [ -f "${{ env.SOLUTION_PATH }}" ]; then
-            echo "Restoring solution ${{ env.SOLUTION_PATH }}"
-            dotnet restore "${{ env.SOLUTION_PATH }}"
+          if [ -n "${{ steps.paths.outputs.sln }}" ]; then
+            echo "Restoring solution ${{ steps.paths.outputs.sln }}"
+            dotnet restore "${{ steps.paths.outputs.sln }}"
           else
-            echo "Solution not found. Restoring project ${{ env.WEB_PROJECT_PATH }}"
-            dotnet restore "${{ env.WEB_PROJECT_PATH }}"
-            if [ -d "tests" ]; then
-              find tests -name "*.csproj" -print0 | xargs -0 -I{} dotnet restore "{}"
-            fi
+            echo "Restoring project ${{ steps.paths.outputs.csproj }}"
+            dotnet restore "${{ steps.paths.outputs.csproj }}"
           fi
 
       - name: Build (Release)
         run: |
-          if [ -f "${{ env.SOLUTION_PATH }}" ]; then
-            dotnet build "${{ env.SOLUTION_PATH }}" -c Release --no-restore
+          if [ -n "${{ steps.paths.outputs.sln }}" ]; then
+            dotnet build "${{ steps.paths.outputs.sln }}" -c Release --no-restore
           else
-            dotnet build "${{ env.WEB_PROJECT_PATH }}" -c Release --no-restore
+            dotnet build "${{ steps.paths.outputs.csproj }}" -c Release --no-restore
           fi
 
+      # 🧪 Tests + cobertura (solo si hay proyectos en /tests)
       - name: Run tests (if any) + coverage
         if: ${{ hashFiles('tests/**.csproj') != '' }}
         run: |

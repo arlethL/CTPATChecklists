@@ -68,21 +68,24 @@ jobs:
           fi
 
       # 🧪 Ejecuta cualquier *Tests.csproj y genera cobertura
-      - name: Run tests (any *Tests.csproj) + coverage
+      - name: Run tests (any *Tests.csproj) + coverage (skip IntegrationTests)
         run: |
           mapfile -t PROJS < <(find . -type f -name "*Tests.csproj")
           if [ ${#PROJS[@]} -eq 0 ]; then
             echo "No test projects found"; exit 0
           fi
           for p in "${PROJS[@]}"; do
-            # Si quieres saltarte integración en CI, descomenta:
-            # [[ "$p" == *IntegrationTests* ]] && echo "Skipping $p" && continue
+            if [[ "$p" == *IntegrationTests* ]]; then
+              echo "Skipping integration tests in CI: $p"
+              continue
+            fi
             echo "Running tests in $p"
             dotnet test "$p" -c Release --no-build \
               --collect:"XPlat Code Coverage" \
               --logger "trx;LogFileName=test_results.trx" \
               --results-directory "TestResults/$(basename "$p" .csproj)"
           done
+
 
       - name: Locate coverage file
         id: cov

@@ -67,22 +67,28 @@ jobs:
             dotnet build "${{ steps.paths.outputs.csproj }}" -c Release --no-restore
           fi
 
-      - name: Run tests (if any) + coverage
-        if: ${{ hashFiles('tests/**.csproj') != '' }}
+      # 🧪 Ejecuta cualquier *Tests.csproj y genera cobertura
+      - name: Run tests (any *Tests.csproj) + coverage
         run: |
-          find tests -name "*.csproj" | while read p; do
+          mapfile -t PROJS < <(find . -type f -name "*Tests.csproj")
+          if [ ${#PROJS[@]} -eq 0 ]; then
+            echo "No test projects found"; exit 0
+          fi
+          for p in "${PROJS[@]}"; do
+            # Si quieres saltarte integración en CI, descomenta:
+            # [[ "$p" == *IntegrationTests* ]] && echo "Skipping $p" && continue
             echo "Running tests in $p"
             dotnet test "$p" -c Release --no-build \
               --collect:"XPlat Code Coverage" \
-              --logger "trx;LogFileName=test_results.trx"
+              --logger "trx;LogFileName=test_results.trx" \
+              --results-directory "TestResults/$(basename "$p" .csproj)"
           done
 
       - name: Locate coverage file
         id: cov
-        if: ${{ hashFiles('**/coverage.cobertura.xml') != '' }}
         run: |
-          FILE=$(find . -type f -name 'coverage.cobertura.xml' | head -n 1)
-          echo "file=$FILE"
+          FILE=$(find TestResults -type f -name 'coverage.cobertura.xml' | head -n 1)
+          echo "Found coverage file: $FILE"
           echo "file=$FILE" >> $GITHUB_OUTPUT
 
       - name: Install ReportGenerator

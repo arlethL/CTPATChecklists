@@ -11,7 +11,9 @@ permissions:
   packages: write
 
 env:
-  WEB_PROJECT_PATH: CTPATChecklists/CTPATChecklists.csproj
+  # 👇 RUTAS CORREGIDAS SEGÚN TU ESTRUCTURA
+  SOLUTION_PATH: CTPATChecklists/CTPATChecklists.sln
+  WEB_PROJECT_PATH: CTPATChecklists/CTPATChecklists/CTPATChecklists.csproj
   DOCKERFILE_PATH: CTPATChecklists/Dockerfile
   IMAGE_NAME: checklistctpat
 
@@ -23,6 +25,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Show repo tree (debug)
+        run: |
+          echo "== ROOT =="
+          ls -la
+          echo "== CTPATChecklists =="
+          ls -la CTPATChecklists || true
+          echo "== tests =="
+          ls -la tests || true
+
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
@@ -30,10 +41,12 @@ jobs:
 
       - name: Restore
         run: |
-          if [ -f "CTPATChecklists.sln" ]; then
-            dotnet restore CTPATChecklists.sln
+          if [ -f "${{ env.SOLUTION_PATH }}" ]; then
+            echo "Restoring solution ${{ env.SOLUTION_PATH }}"
+            dotnet restore "${{ env.SOLUTION_PATH }}"
           else
-            dotnet restore ${{ env.WEB_PROJECT_PATH }}
+            echo "Solution not found. Restoring project ${{ env.WEB_PROJECT_PATH }}"
+            dotnet restore "${{ env.WEB_PROJECT_PATH }}"
             if [ -d "tests" ]; then
               find tests -name "*.csproj" -print0 | xargs -0 -I{} dotnet restore "{}"
             fi
@@ -41,27 +54,28 @@ jobs:
 
       - name: Build (Release)
         run: |
-          if [ -f "CTPATChecklists.sln" ]; then
-            dotnet build CTPATChecklists.sln -c Release --no-restore
+          if [ -f "${{ env.SOLUTION_PATH }}" ]; then
+            dotnet build "${{ env.SOLUTION_PATH }}" -c Release --no-restore
           else
-            dotnet build ${{ env.WEB_PROJECT_PATH }} -c Release --no-restore
+            dotnet build "${{ env.WEB_PROJECT_PATH }}" -c Release --no-restore
           fi
 
-      # Ejecuta tests SOLO si hay proyectos en /tests
-      - name: Run tests (if any)
+      - name: Run tests (if any) + coverage
         if: ${{ hashFiles('tests/**.csproj') != '' }}
         run: |
           find tests -name "*.csproj" | while read p; do
             echo "Running tests in $p"
-            dotnet test "$p" -c Release --no-build --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test_results.trx"
+            dotnet test "$p" -c Release --no-build \
+              --collect:"XPlat Code Coverage" \
+              --logger "trx;LogFileName=test_results.trx"
           done
 
-      # Cobertura SOLO si se generó coverage.cobertura.xml
       - name: Locate coverage file
         id: cov
         if: ${{ hashFiles('**/coverage.cobertura.xml') != '' }}
         run: |
           FILE=$(find . -type f -name 'coverage.cobertura.xml' | head -n 1)
+          echo "file=$FILE"
           echo "file=$FILE" >> $GITHUB_OUTPUT
 
       - name: Install ReportGenerator
@@ -73,7 +87,9 @@ jobs:
         env:
           PATH: $HOME/.dotnet/tools:${{ env.PATH }}
         run: |
-          reportgenerator -reports:"${{ steps.cov.outputs.file }}" -targetdir:"coveragereport" -reporttypes:"HtmlInline;TextSummary"
+          reportgenerator -reports:"${{ steps.cov.outputs.file }}" \
+                          -targetdir:"coveragereport" \
+                          -reporttypes:"HtmlInline;TextSummary"
           echo "### Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat coveragereport/Summary.txt >> $GITHUB_STEP_SUMMARY
@@ -86,17 +102,22 @@ jobs:
           name: coverage-html
           path: coveragereport
 
-      # Docker buildx + push (más estable que 'docker build' crudo)
+      - name: Ensure Dockerfile exists (debug)
+        run: |
+          test -f "${{ env.DOCKERFILE_PATH }}" || (echo "Dockerfile not found at ${{ env.DOCKERFILE_PATH }}" && exit 1)
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
+      - name: Docker login (only if secrets present)
+        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push image
+      - name: Build and push image (if secrets present)
+        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -105,3 +126,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Skip push (no secrets)
+        if: ${{ !(secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' ) }}
+        run: echo "DockerHub secrets not set; skipping push."

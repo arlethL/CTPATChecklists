@@ -1,0 +1,71 @@
+﻿@model CTPATChecklists.Models.ViewModels.BrandingEmpresaViewModel
+
+@{
+    ViewData["Title"] = "Apariencia y Branding";
+}
+
+<h2>@ViewData["Title"]</h2>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form asp-action="Index" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>Logo actual</label><br />
+        @if (!string.IsNullOrEmpty(Model.Branding.LogoPath))
+        {
+            <img src="@Model.Branding.LogoPath" style="max-height:100px" />
+        }
+        <input type="file" name="logoUpload" class="form-control mt-2" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Branding.CompanyName"></label>
+        <input asp-for="Branding.CompanyName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Branding.PrimaryColor"></label>
+        <input asp-for="Branding.PrimaryColor" type="color" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Branding.SecondaryColor"></label>
+        <input asp-for="Branding.SecondaryColor" type="color" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Branding.FontColor"></label>
+        <input asp-for="Branding.FontColor" type="color" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Branding.FontFamily"></label>
+        <select asp-for="Branding.FontFamily" class="form-control">
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="Helvetica, sans-serif">Helvetica</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="'Roboto', sans-serif">Roboto</option>
+        </select>
+    </div>
+
+    @* Mostrar datos de empresa solo si es Superusuario *@
+    @if (User.IsInRole("Superusuario"))
+    {
+        <div class="form-group">
+            <label asp-for="CompanyAddress"></label>
+            <input asp-for="CompanyAddress" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Phone"></label>
+            <input asp-for="Phone" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="ContactEmail"></label>
+            <input asp-for="ContactEmail" class="form-control" />
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>

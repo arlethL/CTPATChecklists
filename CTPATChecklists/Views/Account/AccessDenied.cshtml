@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Acceso Denegado";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="alert alert-danger">
+    No tienes permiso para acceder a esta página.
+</div>
+
+@if (!string.IsNullOrEmpty(returnUrl))
+{
+    <p>
+        <a asp-controller="Home" asp-action="Index">Volver al inicio</a>
+    </p>
+}
+else
+{
+    <p>
+        <a asp-controller="Home" asp-action="Index">Volver al inicio</a>
+    </p>
+}

@@ -1,0 +1,7 @@
+@"
+**/bin/
+**/obj/
+**/.vs/
+TestResults/
+node_modules/
+"@ | Out-File -Encoding UTF8 .gitignore

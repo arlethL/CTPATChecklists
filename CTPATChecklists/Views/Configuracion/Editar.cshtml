@@ -1,0 +1,46 @@
+﻿@model CTPATChecklists.Models.Camara
+
+@{
+    ViewData["Title"] = "Editar Cámara";
+}
+
+<h2>Editar Cámara</h2>
+
+<form asp-action="Editar" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    @* Campo oculto para ID *@
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="IP"></label>
+        <input asp-for="IP" class="form-control" />
+        <span asp-validation-for="IP" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RutaSnapshot"></label>
+        <input asp-for="RutaSnapshot" class="form-control" placeholder="Ej. /ISAPI/Streaming/channels/1/picture" />
+        <span asp-validation-for="RutaSnapshot" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Usuario"></label>
+        <input asp-for="Usuario" class="form-control" />
+        <span asp-validation-for="Usuario" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Contrasena"></label>
+        <input asp-for="Contrasena" class="form-control" type="password" />
+        <span asp-validation-for="Contrasena" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <a asp-action="Index" class="btn btn-secondary ml-2">Cancelar</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

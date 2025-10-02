@@ -1,0 +1,148 @@
+﻿@model IEnumerable<CTPATChecklists.Models.Checklist>
+@{
+    ViewData["Title"] = "Reportes";
+    var f = (dynamic)ViewBag.Filtros;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Index" method="post" class="mb-4">
+    <div class="form-row">
+        <div class="col">
+            <label>Desde</label>
+            <input type="date" name="desde" value="@(f?.desde?.ToString("yyyy-MM-dd") ?? "")" class="form-control" />
+        </div>
+        <div class="col">
+            <label>Hasta</label>
+            <input type="date" name="hasta" value="@(f?.hasta?.ToString("yyyy-MM-dd") ?? "")" class="form-control" />
+        </div>
+        <div class="col">
+            <label>Placa</label>
+            <input type="text" name="placa" placeholder="Placa" value="@(f?.placa ?? "")" class="form-control" />
+        </div>
+        <div class="col">
+            <label>Empresa</label>
+            <input type="text" name="empresa" placeholder="Empresa" value="@(f?.empresa ?? "")" class="form-control" />
+        </div>
+        <div class="col">
+            <label>Operador</label>
+            <input type="text" name="operador" placeholder="Operador" value="@(f?.operador ?? "")" class="form-control" />
+        </div>
+        <div class="col align-self-end">
+            <button name="action" value="buscar" class="btn btn-primary">Buscar</button>
+        </div>
+    </div>
+</form>
+
+@if (ViewBag.Resultados != null)
+{
+    <form asp-action="Index" method="post">
+        <input type="hidden" name="desde" value="@(f?.desde?.ToString("yyyy-MM-dd") ?? "")" />
+        <input type="hidden" name="hasta" value="@(f?.hasta?.ToString("yyyy-MM-dd") ?? "")" />
+        <input type="hidden" name="placa" value="@(f?.placa ?? "")" />
+        <input type="hidden" name="empresa" value="@(f?.empresa ?? "")" />
+        <input type="hidden" name="operador" value="@(f?.operador ?? "")" />
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="chkAll" /></th>
+                    <th>FechaHora</th>
+                    <th>Placa</th>
+                    <th>Empresa</th>
+                    <th>Operador</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in (IEnumerable<CTPATChecklists.Models.Checklist>)ViewBag.Resultados)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="selectedIds" value="@c.Id" class="chkItem" />
+                        </td>
+                        <td>@c.FechaHora.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@c.Placa</td>
+                        <td>@c.Empresa</td>
+                        <td>@c.Operador</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button name="action" value="exportarExcel" class="btn btn-success mr-2">Exportar Excel</button>
+        <button type="button" id="btnExportarPdf" class="btn btn-danger">Ver PDF</button>
+    </form>
+}
+
+<!-- ✅ Modal para vista previa del PDF -->
+<div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Vista previa del PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <iframe id="iframePdf" src="" width="100%" height="600px" style="border: none;"></iframe>
+                <div class="text-end mt-3">
+                    <a id="btnDescargarPdf" class="btn btn-success" href="#" download target="_blank">Descargar PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- ✅ jQuery necesario para $.ajax -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- ✅ Bootstrap JS necesario para $('#modal').modal() -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Botón Exportar PDF
+        document.getElementById('btnExportarPdf').addEventListener('click', function () {
+            const selected = document.querySelectorAll('.chkItem:checked');
+
+            if (selected.length === 0) {
+                alert('Debes seleccionar al menos un checklist.');
+                return;
+            }
+
+            if (selected.length === 1) {
+                const id = selected[0].value;
+
+                $.ajax({
+                    url: '/Reportes/ExportSinglePdfModal',
+                    type: 'POST',
+                    data: { id },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#iframePdf').attr('src', response.url);
+                            $('#btnDescargarPdf').attr('href', response.url);
+                            $('#pdfModal').modal('show');
+                        } else {
+                            alert("No se pudo generar el PDF.");
+                        }
+                    },
+                    error: function () {
+                        alert("Error al generar el PDF.");
+                    }
+                });
+            } else {
+                const form = document.querySelector('form[asp-action="Index"]');
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "action";
+                input.value = "exportarPdf";
+                form.appendChild(input);
+                form.submit();
+            }
+        });
+
+        // Checkbox "Seleccionar todo"
+        document.getElementById('chkAll').addEventListener('change', function () {
+            document.querySelectorAll('.chkItem').forEach(cb => cb.checked = this.checked);
+        });
+    </script>
+}

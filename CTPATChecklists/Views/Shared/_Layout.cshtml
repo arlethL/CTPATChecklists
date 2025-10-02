@@ -1,0 +1,357 @@
+﻿@using CTPATChecklists.Data
+@using Microsoft.EntityFrameworkCore
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@inject AppDbContext _db
+
+@{
+    var companyId = User.FindFirst("CompanyId")?.Value;
+
+    if (string.IsNullOrEmpty(companyId) && User.Identity.IsAuthenticated)
+    {
+        var userEmail = User.Identity.Name;
+        var user = _db.Users.AsNoTracking().FirstOrDefault(u => u.Email == userEmail);
+        companyId = user?.CompanyId;
+    }
+
+    var branding = _db.Brandings
+                      .AsNoTracking()
+                      .FirstOrDefault(b => b.CompanyId == companyId);
+
+    var esVistaLogin = ViewContext.RouteData.Values["Controller"]?.ToString() == "Account"
+                    && ViewContext.RouteData.Values["Action"]?.ToString() == "Login";
+
+    var avisoLicencia = Context.Items["AvisoLicencia"] as string;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - CTPATChecklists</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    @if (branding != null)
+    {
+    <style>
+  /* 1) Variables de branding + tema por defecto (claro) */
+  :root {
+    --primary-color:   @branding.PrimaryColor;
+    --secondary-color: @branding.SecondaryColor;
+    --font-color:      @branding.FontColor;
+    --font-family:     '@branding.FontFamily';
+
+    --bg-color:        #ffffff;
+    --text-color:      var(--font-color);
+    --input-bg:        #f8f9fa;
+    --input-text:      #000000;
+    --alert-bg:        #f8d7da;
+    --alert-text:      #721c24;
+  }
+
+  /* 2) Tema oscuro (sobreescribe variables) */
+  body.dark-mode {
+    --bg-color:   #121212;
+    --text-color: #ffffff;
+    --input-bg:   #1f1f1f;
+    --input-text: #ffffff;
+    --alert-bg:   rgba(255,193,7,0.2);
+    --alert-text: #ffc107;
+  }
+
+  /* 3) Tema claro explícito */
+  body.light-mode {
+    --bg-color:   #ffffff;
+    --text-color: var(--font-color);
+    --input-bg:   #f8f9fa;
+    --input-text: #000000;
+    --alert-bg:   #f8d7da;
+    --alert-text: #721c24;
+  }
+
+  /* 4) Estilos globales usando variables */
+  body {
+    background:  var(--bg-color);
+    color:       var(--text-color);
+    font-family: var(--font-family);
+    transition:  background 0.3s, color 0.3s;
+  }
+
+  /* Navbar y footer con colores de branding */
+  .navbar,
+  .footer {
+    background: var(--primary-color) !important;
+  }
+
+  .navbar .nav-link,
+  .footer a {
+    color: var(--secondary-color) !important;
+  }
+  .navbar .nav-link:hover,
+  .footer a:hover {
+    color: white !important;
+  }
+
+  /* Botones Brand */
+  .btn,
+  .btn-primary,
+  .btn-success,
+  .btn-info,
+  .btn-brand {
+    background: var(--primary-color) !important;
+    border:     1px solid var(--primary-color) !important;
+    color:      white !important;
+  }
+  .btn:hover {
+    background: var(--secondary-color) !important;
+    border:     1px solid var(--secondary-color) !important;
+    color:      white !important;
+  }
+
+  /* Inputs, selects, textareas */
+  .form-control,
+  input,
+  select,
+  textarea {
+    background: var(--input-bg) !important;
+    color:      var(--input-text) !important;
+    border:     1px solid var(--primary-color) !important;
+  }
+  .form-control:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow:   0 0 5px var(--secondary-color) !important;
+  }
+
+  /* Titulares SIEMPRE con primary */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--primary-color) !important;
+  }
+
+  /* Tablas */
+  table thead th,
+  .card-header {
+    background: var(--primary-color) !important;
+    color:      white !important;
+  }
+  table td {
+    color: var(--text-color) !important;
+  }
+
+  /* Alerts */
+  .alert-warning,
+  .alert-danger,
+  .alert-success {
+    background: var(--alert-bg) !important;
+    color:      var(--alert-text) !important;
+    border:     none !important;
+  }
+
+  /* Override para TODO el contenido de .container */
+  body.dark-mode .container,
+  body.light-mode .container {
+    color: var(--text-color) !important;
+  }
+
+  /* Otros textos genéricos */
+  label,
+  .form-text,
+  .text-muted,
+  p,
+  span,
+  small {
+    color: var(--text-color) !important;
+  }
+
+  /* Placeholder */
+  ::placeholder {
+    color: #aaa !important;
+  }
+    </style>
+    }
+
+
+
+
+
+
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+        @if (User.Identity.IsAuthenticated)
+        {
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+            @if (!string.IsNullOrEmpty(branding?.LogoPath))
+                {
+            <img src="@branding.LogoPath" alt="Logo" style="max-height: 40px; max-width: 160px;" />
+                }
+                else
+                {
+            <span class="font-weight-bold text-dark">CTPATChecklists</span>
+                }
+        </a>
+        }
+        else
+        {
+        <span class="navbar-brand text-muted">
+            @if (!string.IsNullOrEmpty(branding?.LogoPath))
+                {
+            <img src="@branding.LogoPath" alt="Logo" style="max-height: 40px; max-width: 160px;" />
+                }
+                else
+                {
+            <span class="font-weight-bold">CTPATChecklists</span>
+                }
+        </span>
+        }
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navBar">
+            <ul class="navbar-nav mr-auto">
+                @if (User.IsInRole("Superusuario"))
+                {
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Empresas" asp-action="Registrar">Registrar Nueva Empresa</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Licencias" asp-action="Generar">Generar Licencias</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Licencias" asp-action="Activas">Ver Licencias</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="GlobalSettings" asp-action="Index">
+                        <i class="bi bi-gear-fill"></i> Configuración Global
+                    </a>
+                </li>
+
+
+                }
+                else if (User.IsInRole("Administrador"))
+                {
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Checklist" asp-action="Index">Checklists</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Usuarios" asp-action="Create">Usuarios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Reportes" asp-action="Index">Reportes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="LicenciasEmpresa" asp-action="CanjearDesdeAdmin">Canjear Licencia</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Configuracion" asp-action="Index">
+                        <i class="bi bi-gear"></i> Configuración
+                    </a>
+                </li>
+                }
+                else if (User.IsInRole("Guardia") || User.IsInRole("Consultor"))
+                {
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Checklist" asp-action="Index">Checklist</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Reportes" asp-action="Index">Reportes</a>
+                </li>
+                }
+            </ul>
+
+            <ul class="navbar-nav">
+                @if (User.Identity.IsAuthenticated)
+                {
+                <li class="nav-item">
+                    <span class="navbar-text mr-2">Hola, @User.Identity.Name</span>
+                </li>
+                    if (!string.IsNullOrEmpty(branding?.CompanyName))
+                    {
+                <li class="nav-item">
+                    <span class="navbar-text">@branding.CompanyName</span>
+                </li>
+                    }
+                <li class="nav-item">
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
+                        <button type="submit" class="btn btn-link nav-link">Cerrar Sesión</button>
+                    </form>
+                </li>
+                }
+                else if (!esVistaLogin)
+                {
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Account" asp-action="Login">Iniciar Sesión</a>
+                </li>
+                }
+
+                <li class="nav-item">
+                    <button id="darkModeToggle" class="btn btn-link nav-link">
+                        <span id="darkModeIcon">🌞</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    @if (!string.IsNullOrEmpty(avisoLicencia))
+    {
+    <div class="alert alert-warning text-center mb-0">
+        <strong>@Html.Raw(avisoLicencia)</strong>
+    </div>
+    }
+    @{
+    var smtpCfg = _db.GlobalSettings.FirstOrDefault();
+    }
+
+    @if (User.IsInRole("Superusuario") && smtpCfg != null &&
+     (smtpCfg.SmtpServer == "smtp.ejemplo.com" || smtpCfg.FromEmail == "noreply@ejemplo.com"))
+{
+    <div class="alert alert-warning text-center mb-0">
+        ⚠️ La configuración global de correo SMTP aún está usando valores genéricos. <a href="/GlobalSettings/Index" class="alert-link">Haz clic aquí para actualizarla</a>.
+    </div>
+}
+
+
+    <div class="container py-4">
+        @RenderBody()
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        (function () {
+            const toggle = document.getElementById('darkModeToggle');
+            const icon = document.getElementById('darkModeIcon');
+            const body = document.body;
+
+            function aplicarModo(modo) {
+                body.classList.remove('dark-mode', 'light-mode');
+                body.classList.add(modo);
+                icon.textContent = modo === 'dark-mode' ? '🌚' : '🌞';
+                localStorage.setItem('mode', modo);
+            }
+
+            const modoGuardado = localStorage.getItem('mode') || 'dark-mode';
+            aplicarModo(modoGuardado);
+
+            toggle.addEventListener('click', () => {
+                const nuevoModo = body.classList.contains('dark-mode') ? 'light-mode' : 'dark-mode';
+                aplicarModo(nuevoModo);
+            });
+        })();
+    </script>
+
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

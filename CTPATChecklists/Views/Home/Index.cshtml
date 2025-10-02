@@ -1,0 +1,33 @@
+﻿@using CTPATChecklists.Data
+@inject AppDbContext _db
+
+@{
+    ViewData["Title"] = "Inicio";
+    var companyId = User.FindFirst("CompanyId")?.Value;
+    var branding = _db.Brandings.FirstOrDefault(b => b.CompanyId == companyId);
+}
+
+<div class="container text-center mt-5">
+    @* Mostrar el logo si existe *@
+    @if (!string.IsNullOrEmpty(branding?.LogoPath))
+    {
+    <div class="mb-4">
+        <img src="@branding.LogoPath" alt="Logo de la Empresa" style="max-height: 100px;" />
+    </div>
+    }
+
+    <h1 class="display-4" style="color: var(--primary-color); font-weight: bold;">
+        Bienvenido al Sistema CTPAT
+    </h1>
+
+    <p class="lead mt-3" style="color: var(--text-color);">
+        Estás trabajando con la empresa <strong>@branding?.CompanyName</strong>.
+    </p>
+
+    <hr class="my-4" />
+
+    <p style="color: var(--text-color);">
+        Usa el menú superior para navegar por los módulos del sistema:<br />
+        Checklists, Usuarios, Reportes y más.
+    </p>
+</div>

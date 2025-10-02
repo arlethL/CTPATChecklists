@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Generar Licencia para Empresa";
+}
+
+<!-- Bootstrap & Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<style>
+    .card-licencia {
+        background: #f9f9f9;
+        border-radius: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+
+    .card-header-custom {
+        background-color: #0047ab;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+        margin: -2rem -2rem 2rem -2rem;
+    }
+
+    label {
+        font-weight: 600;
+    }
+
+    .btn-primary {
+        background-color: #0047ab;
+        border: none;
+        font-weight: 600;
+    }
+
+        .btn-primary:hover {
+            background-color: #003d99;
+        }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card-licencia">
+
+                <div class="card-header-custom">
+                    <h4 class="mb-0">
+                        <i class="bi bi-file-earmark-plus-fill"></i> Generar Licencia para Empresa
+                    </h4>
+                </div>
+
+                @if (ViewBag.Mensaje != null)
+                {
+                <div class="alert alert-success" role="alert">
+                    @Html.Raw(ViewBag.Mensaje)
+                </div>
+                }
+
+                @if (ViewBag.Error != null)
+                {
+                <div class="alert alert-danger" role="alert">
+                    @ViewBag.Error
+                </div>
+                }
+
+                <form asp-action="Generar" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Empresa</label>
+                        <select class="form-select" name="companyId" id="empresaSelect" required onchange="actualizarConteo()">
+                            <option value="">-- Selecciona una empresa --</option>
+                            @foreach (var empresa in ViewBag.Empresas)
+                            {
+                            <option value="@empresa.CompanyId">@empresa.Nombre</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Duración</label>
+                        <select class="form-select" name="tipo" required>
+                            <option value="">-- Selecciona una duración --</option>
+                            <option value="dias">1 Día</option>
+                            <option value="meses">1 Mes</option>
+                            <option value="años">1 Año</option>
+                        </select>
+                    </div>
+
+                    <div id="conteoLicencias" class="mb-3" style="display:none;">
+                        <div class="alert alert-info p-3 rounded shadow-sm">
+                            <strong>Licencias canjeadas:</strong><br />
+                            <span id="conteoDia" class="badge bg-primary mb-1">1 Día: 0</span><br />
+                            <span id="conteoMes" class="badge bg-success mb-1">1 Mes: 0</span><br />
+                            <span id="conteoAno" class="badge bg-secondary">1 Año: 0</span>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="cantidad" value="1" />
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-check-circle-fill"></i> Generar Licencia
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@using System.Text.Json
+@section Scripts {
+    <script>
+        const conteos = @Html.Raw(JsonSerializer.Serialize((object)ViewBag.ConteosLicencias));
+
+        function actualizarConteo() {
+            const empresaId = document.getElementById("empresaSelect").value;
+            const conteo = conteos[empresaId];
+            const div = document.getElementById("conteoLicencias");
+
+            if (conteo) {
+                document.getElementById("conteoDia").innerText = `1 Día: ${conteo.UnoDia}`;
+                document.getElementById("conteoMes").innerText = `1 Mes: ${conteo.UnoMes}`;
+                document.getElementById("conteoAno").innerText = `1 Año: ${conteo.UnoAno}`;
+                div.style.display = "block";
+            } else {
+                div.style.display = "none";
+            }
+        }
+    </script>
+}
+
+

@@ -1,0 +1,160 @@
+﻿@model List<CTPATChecklists.Models.Licencia>
+
+    @{
+    ViewData["Title"] = "Licencias activas";
+    }
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+    <style>
+    :root {
+        --primary-color: #1e90ff;
+        --badge-green: #20c997;
+        --badge-yellow: #ffc107;
+        --badge-red: #e63946;
+    }
+
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .titulo-icono {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .container {
+        background-color: #1e1e1e;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .table {
+        background-color: #2a2a2a;
+        color: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .table th {
+        background-color: #3a3a3a;
+        color: #ffffff;
+        border-color: #444;
+        font-weight: 500;
+    }
+
+    .table td {
+        background-color: #2a2a2a;
+        color: #eaeaea;
+        border-color: #444;
+        vertical-align: middle;
+    }
+
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+    }
+
+    .badge-encurso {
+        background-color: var(--badge-green);
+        color: #fff;
+    }
+
+    .badge-finalizada {
+        background-color: var(--badge-red);
+        color: #fff;
+    }
+
+    .badge-porfinalizar {
+        background-color: var(--badge-yellow);
+        color: #212529;
+    }
+
+    .hora {
+        font-size: 0.85rem;
+        color: #bbb;
+    }
+
+    .table-responsive {
+        border-radius: 12px;
+        overflow-x: auto;
+    }
+
+    @@media screen and (max-width: 768px) {
+        .titulo-icono {
+            font-size: 1.2rem;
+        }
+
+        .table th, .table td {
+            font-size: 0.9rem;
+            padding: 0.5rem;
+        }
+    }
+    </style>
+
+
+
+    <div class="container mt-4 mb-5">
+        <div class="d-flex align-items-center mb-4">
+            <i class="bi bi-shield-check me-2 fs-3 text-primary"></i>
+            <h2 class="titulo-icono mb-0">Licencias activas</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Empresa</th>
+                        <th scope="col">Código</th>
+                        <th scope="col">Fecha de Canjeo</th>
+                        <th scope="col">Fecha de Expiración</th>
+                        <th scope="col">Estatus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var licencia in Model)
+                {
+                    var now = DateTime.UtcNow;
+                    var expiracion = licencia.FechaExpiracion;
+                    var diferencia = expiracion - now;
+
+                    string estatusTexto;
+                    string clase;
+
+                    if (expiracion <= now)
+                    {
+                        estatusTexto = "Finalizada";
+                        clase = "badge-finalizada";
+                    }
+                    else if (diferencia.TotalHours <= 24)
+                    {
+                        int horas = (int)diferencia.TotalHours;
+                        int minutos = diferencia.Minutes;
+                        estatusTexto = $"Por finalizar ({horas}h {minutos}m)";
+                        clase = "badge-porfinalizar";
+                    }
+                    else
+                    {
+                        estatusTexto = "En curso";
+                        clase = "badge-encurso";
+                    }
+
+                    <tr>
+                        <td>@licencia.Empresa?.Nombre</td>
+                        <td>@licencia.CodigoActivacion</td>
+                        <td><span class="hora">@licencia.FechaInicio.ToLocalTime()</span></td>
+                        <td><span class="hora">@licencia.FechaExpiracion.ToLocalTime()</span></td>
+                        <td><span class="badge @clase px-3 py-2">@estatusTexto</span></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>

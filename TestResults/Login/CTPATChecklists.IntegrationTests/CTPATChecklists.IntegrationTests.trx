@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="11b00937-bcb3-4a4f-9b0f-e4170c076bcd" name="arleth@MSI 2025-09-25 23:51:49" runUser="MSI\arleth" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2025-09-25T23:51:49.8208660-06:00" queuing="2025-09-25T23:51:49.8208662-06:00" start="2025-09-25T23:51:43.6384099-06:00" finish="2025-09-25T23:51:49.8314675-06:00" />
+  <TestSettings name="default" id="acaff6a1-19c1-4c9b-b972-f97fb97403b4">
+    <Deployment runDeploymentRoot="arleth_MSI_2025-09-25_23_51_49" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="656cd23f-0c5a-44af-91a7-604ee1efaa6e" testId="0e6c10c4-c001-801f-7d67-c7a2b41ad578" testName="Demo_Login_Falla_Adrede" computerName="MSI" duration="00:00:00.0116522" startTime="2025-09-25T23:51:49.5309704-06:00" endTime="2025-09-25T23:51:49.5608114-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="656cd23f-0c5a-44af-91a7-604ee1efaa6e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Fail failed. Prueba de demo (Login) que falla a propósito para verificar los informes.</Message>
+          <StackTrace>   at CTPATChecklists.IntegrationTests.FailLoginTests.Demo_Login_Falla_Adrede() in C:\Users\arleth\Desktop\CTPATChecklists\CTPATChecklists.IntegrationTests\FailLoginTests.cs:line 13&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Demo_Login_Falla_Adrede" storage="c:\users\arleth\desktop\ctpatchecklists\ctpatchecklists.integrationtests\bin\release\net8.0\ctpatchecklists.integrationtests.dll" id="0e6c10c4-c001-801f-7d67-c7a2b41ad578">
+      <TestCategory>
+        <TestCategoryItem TestCategory="Login" />
+      </TestCategory>
+      <Execution id="656cd23f-0c5a-44af-91a7-604ee1efaa6e" />
+      <TestMethod codeBase="C:\Users\arleth\Desktop\CTPATChecklists\CTPATChecklists.IntegrationTests\bin\Release\net8.0\CTPATChecklists.IntegrationTests.dll" adapterTypeName="executor://mstestadapter/v2" className="CTPATChecklists.IntegrationTests.FailLoginTests" name="Demo_Login_Falla_Adrede" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0e6c10c4-c001-801f-7d67-c7a2b41ad578" executionId="656cd23f-0c5a-44af-91a7-604ee1efaa6e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>Test Parallelization enabled for C:\Users\arleth\Desktop\CTPATChecklists\CTPATChecklists.IntegrationTests\bin\Release\net8.0\CTPATChecklists.IntegrationTests.dll (Workers: 16, Scope: MethodLevel)&#xD;
+</StdOut>
+    </Output>
+    <CollectorDataEntries>
+      <Collector agentName="MSI" uri="datacollector://microsoft/CoverletCodeCoverage/1.0" collectorDisplayName="XPlat code coverage">
+        <UriAttachments>
+          <UriAttachment>
+            <A href="MSI\coverage.cobertura.xml"></A>
+          </UriAttachment>
+        </UriAttachments>
+      </Collector>
+    </CollectorDataEntries>
+  </ResultSummary>
+</TestRun>

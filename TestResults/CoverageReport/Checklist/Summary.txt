@@ -1,0 +1,99 @@
+Summary
+  Generated on: 25/09/2025 - 09:57:32 p. m.
+  Coverage date: 25/09/2025 - 09:54:31 p. m. - 25/09/2025 - 09:57:29 p. m.
+  Parser: MultiReport (20x Cobertura)
+  Assemblies: 1
+  Classes: 77
+  Files: 77
+  Line coverage: 0.1%
+  Covered lines: 5
+  Uncovered lines: 3465
+  Coverable lines: 3470
+  Total lines: 8554
+  Branch coverage: 0% (0 of 1282)
+  Covered branches: 0
+  Total branches: 1282
+  Method coverage: 1.7% (5 of 289)
+  Full method coverage: 1.7% (5 of 289)
+  Covered methods: 5
+  Fully covered methods: 5
+  Total methods: 289
+
+CTPATChecklists                                                           0.1%
+  AspNetCoreGeneratedDocument.Views__ViewStart                              0%
+  AspNetCoreGeneratedDocument.Views_Account_AccessDenied                    0%
+  AspNetCoreGeneratedDocument.Views_Account_ForgotPassword                  0%
+  AspNetCoreGeneratedDocument.Views_Account_ForgotPasswordConfirmation      0%
+  AspNetCoreGeneratedDocument.Views_Account_Login                           0%
+  AspNetCoreGeneratedDocument.Views_Account_ResetPassword                   0%
+  AspNetCoreGeneratedDocument.Views_Account_ResetPasswordConfirmation       0%
+  AspNetCoreGeneratedDocument.Views_Admin_EditRoles                         0%
+  AspNetCoreGeneratedDocument.Views_Admin_Index                             0%
+  AspNetCoreGeneratedDocument.Views_Branding_Index                          0%
+  AspNetCoreGeneratedDocument.Views_Checklist_Create                        0%
+  AspNetCoreGeneratedDocument.Views_Checklist_Details                       0%
+  AspNetCoreGeneratedDocument.Views_Checklist_Index                         0%
+  AspNetCoreGeneratedDocument.Views_Configuracion_Agregar                   0%
+  AspNetCoreGeneratedDocument.Views_Configuracion_Editar                    0%
+  AspNetCoreGeneratedDocument.Views_Configuracion_Index                     0%
+  AspNetCoreGeneratedDocument.Views_Empresas_Registrar                      0%
+  AspNetCoreGeneratedDocument.Views_GlobalSettings_Index                    0%
+  AspNetCoreGeneratedDocument.Views_Home_Index                              0%
+  AspNetCoreGeneratedDocument.Views_Home_Privacy                            0%
+  AspNetCoreGeneratedDocument.Views_Licencia_Expirada                       0%
+  AspNetCoreGeneratedDocument.Views_Licencias_Activas                       0%
+  AspNetCoreGeneratedDocument.Views_Licencias_Generar                       0%
+  AspNetCoreGeneratedDocument.Views_LicenciasEmpresa_CanjearDesdeAdmin      0%
+  AspNetCoreGeneratedDocument.Views_Reportes_Index                          0%
+  AspNetCoreGeneratedDocument.Views_Reportes_VistaPreviaPdf                 0%
+  AspNetCoreGeneratedDocument.Views_Shared__Layout                          0%
+  AspNetCoreGeneratedDocument.Views_Shared_Error                            0%
+  AspNetCoreGeneratedDocument.Views_usuarios_create                         0%
+  Branding                                                                  0%
+  BrandingController                                                        0%
+  Class1                                                                    0%
+  ConteoLicenciasDto                                                        0%
+  CTPATChecklists.Controllers.AccountController                             0%
+  CTPATChecklists.Controllers.AdminController                               0%
+  CTPATChecklists.Controllers.ChecklistController                           0%
+  CTPATChecklists.Controllers.ConfiguracionController                       0%
+  CTPATChecklists.Controllers.CorreoTestController                          0%
+  CTPATChecklists.Controllers.EmpresasController                            0%
+  CTPATChecklists.Controllers.GlobalSettingsController                      0%
+  CTPATChecklists.Controllers.HomeController                                0%
+  CTPATChecklists.Controllers.LicenciaController                            0%
+  CTPATChecklists.Controllers.LicenciasEmpresaController                    0%
+  CTPATChecklists.Controllers.ReportesController                            0%
+  CTPATChecklists.Data.AppDbContext                                         0%
+  CTPATChecklists.Data.DesignTimeDbContextFactory                           0%
+  CTPATChecklists.Middleware.VerificarLicenciaMiddleware                    0%
+  CTPATChecklists.Migrations.AppDbContextModelSnapshot                      0%
+  CTPATChecklists.Migrations.InitialCreate                                  0%
+  CTPATChecklists.Models.AdminCreateViewModel                               0%
+  CTPATChecklists.Models.ApplicationUser                                    0%
+  CTPATChecklists.Models.Camara                                             0%
+  CTPATChecklists.Models.Checklist                                          0%
+  CTPATChecklists.Models.CodigoLicencia                                     0%
+  CTPATChecklists.Models.CreateUserViewModel                                0%
+  CTPATChecklists.Models.EditRolesViewModel                                 0%
+  CTPATChecklists.Models.Empresa                                            0%
+  CTPATChecklists.Models.ErrorViewModel                                     0%
+  CTPATChecklists.Models.ForgotPasswordViewModel                            0%
+  CTPATChecklists.Models.FotoChecklist                                      0%
+  CTPATChecklists.Models.GlobalSetting                                      0%
+  CTPATChecklists.Models.Licencia                                           0%
+  CTPATChecklists.Models.LoginViewModel                                     0%
+  CTPATChecklists.Models.Operador                                           0%
+  CTPATChecklists.Models.Placa                                              0%
+  CTPATChecklists.Models.PuntoChecklist                                  71.4%
+  CTPATChecklists.Models.ResetPasswordViewModel                             0%
+  CTPATChecklists.Models.RoleCheckbox                                       0%
+  CTPATChecklists.Models.ViewModels.BrandingEmpresaViewModel                0%
+  CTPATChecklists.Models.ViewModels.EmpresaRegistroViewModel                0%
+  CTPATChecklists.Models.ViewModels.GenerarLicenciaViewModel                0%
+  CTPATChecklists.Services.EmailSender                                      0%
+  CTPATChecklists.Services.LicenciaExpirationService                        0%
+  CTPATChecklists.Views.Branding.IndexModel                                 0%
+  LicenciasController                                                       0%
+  Program                                                                   0%
+  UsuariosController                                                        0%

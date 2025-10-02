@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Licencia expirada";
+    var codigoIngresado = ViewBag.CodigoIngresado as string ?? "";
+}
+
+<div class="container mt-5 text-center">
+    <h2 class="text-danger">⚠️ Licencia Expirada</h2>
+    <p>Tu empresa no tiene una licencia activa o esta ha expirado.</p>
+    <p>Por favor, contacta al administrador o vuelve a iniciar sesión con otro usuario.</p>
+
+    <!-- Botón para cerrar sesión -->
+    <form asp-controller="Account" asp-action="Logout" method="post" class="mb-4">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-primary mt-3">
+            🔁 Volver al Login
+        </button>
+    </form>
+
+    <!-- Solo mostrar el formulario si el usuario es Administrador -->
+    @if (User.IsInRole("Administrador"))
+    {
+    <div class="card p-3 bg-dark text-white mx-auto" style="max-width: 400px;">
+        <h5 class="mb-3">Canjear código de activación</h5>
+        <form asp-controller="LicenciasEmpresa" asp-action="CanjearCodigo" method="post">
+            @Html.AntiForgeryToken()
+            <input type="text"
+                   name="codigo"
+                   class="form-control mb-2"
+                   placeholder="Código de activación"
+                   value="@codigoIngresado"
+                   required />
+            <button type="submit" class="btn btn-success w-100">Canjear</button>
+        </form>
+
+        @if (!string.IsNullOrEmpty(ViewBag.ErrorCodigo))
+            {
+        <div class="text-danger mt-2">@ViewBag.ErrorCodigo</div>
+            }
+    </div>
+    }
+</div>

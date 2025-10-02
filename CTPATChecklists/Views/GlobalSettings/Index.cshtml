@@ -1,0 +1,70 @@
+@model CTPATChecklists.Models.GlobalSetting
+@{
+    ViewData["Title"] = "Configuración Global";
+}
+
+<h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+@if (ViewBag.EsGenerica == true)
+{
+<div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    Estás utilizando una configuración SMTP genérica. Para habilitar el envío de correos, actualiza esta configuración con tus datos reales.
+</div>
+}
+
+@if (ViewBag.Mensaje != null)
+{
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    @ViewBag.Mensaje
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+}
+
+<div class="card shadow-lg">
+    <div class="card-body">
+        <form asp-action="Index" method="post">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="SmtpServer" class="form-label">Servidor SMTP</label>
+                    <input asp-for="SmtpServer" class="form-control" placeholder="smtp.gmail.com" />
+                    <span asp-validation-for="SmtpServer" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-2">
+                    <label asp-for="SmtpPort" class="form-label">Puerto</label>
+                    <input asp-for="SmtpPort" type="number" class="form-control" placeholder="587" />
+                    <span asp-validation-for="SmtpPort" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="SmtpUser" class="form-label">Usuario SMTP</label>
+                    <input asp-for="SmtpUser" class="form-control" placeholder="correo@ejemplo.com" />
+                    <span asp-validation-for="SmtpUser" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Password" class="form-label">Contraseña SMTP</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Contraseña de aplicación" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="FromEmail" class="form-label">Correo Remitente (From)</label>
+                    <input asp-for="FromEmail" type="email" class="form-control" placeholder="correo@ejemplo.com" />
+                    <span asp-validation-for="FromEmail" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mt-4 text-end">
+                <button type="submit" class="btn btn-success px-4">
+                    <i class="bi bi-save me-2"></i>Guardar Configuración
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

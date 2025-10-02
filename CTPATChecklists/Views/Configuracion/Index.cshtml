@@ -1,0 +1,39 @@
+﻿@model List<CTPATChecklists.Models.Camara>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+
+<h2>Cámaras configuradas</h2>
+
+<a class="btn btn-primary mb-3" asp-action="Agregar">Agregar nueva cámara</a>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>IP</th>
+            <th>Usuario</th>
+            <th>Contraseña</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.IP</td>
+                <td>@c.Usuario</td>
+                <td>••••••••</td>
+                <td>
+                    <a asp-action="Editar" asp-route-id="@c.Id" class="btn btn-sm btn-warning">Editar</a>
+                    <form asp-action="Eliminar" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar esta cámara?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,226 @@
+﻿@model CTPATChecklists.Models.Checklist
+
+<div class="container">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    <!-- 🔷 DATOS GENERALES -->
+    <h5 class="mt-4">Datos Generales</h5>
+    <table class="table table-bordered table-sm">
+        <tbody>
+            <tr>
+                <th>Fecha</th>
+                <td>@Model.FechaHora.ToString("g")</td>
+                <th>Movimiento</th>
+                <td>@(Model.EsEntrada == true ? "Entrada" : "Salida")</td>
+            </tr>
+            <tr>
+                <th>Placa</th>
+                <td>@Model.Placa</td>
+                <th>ID Caja</th>
+                <td>@Model.IdCajaTrailer</td>
+            </tr>
+            <tr>
+                <th>Chofer</th>
+                <td>@Model.Operador</td>
+                <th>Empresa</th>
+                <td>@Model.Empresa</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 🔷 FOLIOS -->
+    <h5 class="mt-4">Folios</h5>
+    <table class="table table-bordered table-sm">
+        <tbody>
+            <tr>
+                <th>Folio Hoja Viajera</th>
+                <td>@Model.FolioHojaViajera</td>
+                <th>Folio Inspección Origen</th>
+                <td>@Model.FolioInspeccionOrigen</td>
+            </tr>
+            <tr>
+                <th>Folio Inspección</th>
+                <td>@Model.FolioInspeccion</td>
+                <th>Línea</th>
+                <td>@Model.Linea</td>
+            </tr>
+            <tr>
+                <th>Estado</th>
+                <td>@Model.Estado</td>
+                <th>Sucursal Origen</th>
+                <td>@Model.SucursalOrigen</td>
+            </tr>
+            <tr>
+                <th>Sucursal Destino</th>
+                <td colspan="3">@Model.SucursalDestino</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 🔷 FECHAS Y HORAS -->
+    <h5 class="mt-4">Fechas y Horas</h5>
+    <table class="table table-bordered table-sm">
+        <tbody>
+            <tr>
+                <th>Fecha/Hora Salida</th>
+                <td>@Model.FechaHoraSalida?.ToString("g")</td>
+                <th>Fecha/Hora Entrada</th>
+                <td>@Model.FechaHoraEntrada?.ToString("g")</td>
+            </tr>
+            <tr>
+                <th>Hora Inicio Inspección</th>
+                <td>@Model.HoraInicioInspeccion?.ToString("t")</td>
+                <th>Hora Final Inspección</th>
+                <td>@Model.HoraFinalInspeccion?.ToString("t")</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 🔷 VEHÍCULO -->
+    <h5 class="mt-4">Vehículo</h5>
+    <table class="table table-bordered table-sm">
+        <tbody>
+            <tr>
+                <th>Fianza</th>
+                <td>@Model.Fianza</td>
+                <th>Marca Tractor</th>
+                <td>@Model.MarcaTractor</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 🔷 REMOLQUE -->
+    <h5 class="mt-4">Remolque</h5>
+    <table class="table table-bordered table-sm">
+        <tbody>
+            <tr>
+                <th>Año</th>
+                <td>@Model.RemolqueAnio</td>
+                <th>VIN</th>
+                <td>@Model.RemolqueVIN</td>
+            </tr>
+            <tr>
+                <th>Marca</th>
+                <td colspan="3">@Model.RemolqueMarca</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 🔷 CONTENEDOR -->
+    <h5 class="mt-4">Contenedor</h5>
+    <table class="table table-bordered table-sm">
+        <tbody>
+            <tr>
+                <th>Año</th>
+                <td>@Model.ContenedorAnio</td>
+                <th>VIN</th>
+                <td>@Model.ContenedorVIN</td>
+            </tr>
+            <tr>
+                <th>Marca</th>
+                <td colspan="3">@Model.ContenedorMarca</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 🔷 SELLOS -->
+    <h5 class="mt-4">Sellos</h5>
+    <table class="table table-bordered table-sm">
+        <tbody>
+            <tr>
+                <th>Sello Carga/Vacía</th>
+                <td>@Model.SelloCarga</td>
+                <th>Sello Adicional</th>
+                <td>@Model.SelloAdicional</td>
+            </tr>
+            <tr>
+                <th>Hora/Lugar/Motivo Retiro Sello</th>
+                <td colspan="3">@Model.HoraLugarMotivoRetiroSello</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 🔷 PUNTOS CTPAT -->
+    <h4 class="mt-5">Puntos del Checklist CTPAT</h4>
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Descripción</th>
+                <th>Cumple</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Puntos)
+            {
+            <tr>
+                <td>@p.Descripcion</td>
+                <td>
+                    @if (p.Cumple == true)
+                        {
+                    <span class="badge bg-success">✔ Sí</span>
+                        }
+                        else
+                        {
+                    <span class="badge bg-danger">✖ No</span>
+                        }
+                </td>
+                <td>@(string.IsNullOrWhiteSpace(p.Observaciones) ? "-" : p.Observaciones)</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- 🔷 FOTOS -->
+    <h4 class="mt-5">Fotos del Checklist</h4>
+    <div class="row">
+        @foreach (var f in Model.Fotos)
+        {
+        <div class="col-6 col-md-4 col-lg-3 mb-3">
+            <img src="@f.Url" class="img-fluid rounded shadow-sm border" alt="Foto checklist" />
+        </div>
+        }
+    </div>
+
+    <!-- 🔷 FIRMAS -->
+    <h4 class="mt-5">Firmas</h4>
+         <div class="col-md-3 mb-3">
+            <h6>Operador de Origen</h6>
+            @if (!string.IsNullOrEmpty(Model.FirmaOperadorOrigen))
+        {
+            <img src="@Model.FirmaOperadorOrigen" class="img-fluid border rounded" alt="Firma Operador de Origen" />
+        }
+        else
+        {
+            <p class="text-muted">Sin firma</p>
+        }
+        </div>
+        <div class="col-md-3 mb-3">
+            <h6>Oficial</h6>
+            @if (!string.IsNullOrEmpty(Model.FirmaOficial))
+        {
+            <img src="@Model.FirmaOficial" class="img-fluid border rounded" alt="Firma Oficial" />
+        }
+        else
+        {
+            <p class="text-muted">Sin firma</p>
+        }
+        </div>
+        <div class="col-md-3 mb-3">
+            <h6>Supervisor</h6>
+            @if (!string.IsNullOrEmpty(Model.FirmaSupervisor))
+        {
+            <img src="@Model.FirmaSupervisor" class="img-fluid border rounded" alt="Firma Supervisor" />
+        }
+        else
+        {
+            <p class="text-muted">Sin firma</p>
+        }
+        </div>
+    </div>
+
+
+    <div class="mt-4 text-end">
+        <a asp-action="Index" class="btn btn-secondary">← Volver a la lista</a>
+    </div>
+</div>
